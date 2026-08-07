@@ -23,14 +23,6 @@ class PowermailLanguageUpdateWizard implements UpgradeWizardInterface
     /**
      * @return string
      */
-    public function getIdentifier(): string
-    {
-        return 'powermailLanguageUpdateWizard';
-    }
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return 'Powermail: Update language settings in mails and answers (relevant for entries from < 8.0.0)';

@@ -23,14 +23,6 @@ class PowermailRelationUpdateWizard implements UpgradeWizardInterface
     /**
      * @return string
      */
-    public function getIdentifier(): string
-    {
-        return 'powermailRelationUpdateWizard';
-    }
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return 'Powermail: Update relations in database (relevant for entries from < 8.0.0)';
