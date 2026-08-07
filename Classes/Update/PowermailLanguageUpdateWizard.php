@@ -22,11 +22,6 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 #[UpgradeWizard('powermailLanguageUpdateWizard')]
 class PowermailLanguageUpdateWizard implements UpgradeWizardInterface
 {
-    public function getIdentifier(): string
-    {
-        return 'powermailLanguageUpdateWizard';
-    }
-
     public function getTitle(): string
     {
         return 'Powermail: Update language settings in mails and answers (relevant for entries from < 8.0.0)';

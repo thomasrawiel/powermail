@@ -22,11 +22,6 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 #[UpgradeWizard('powermailPermissionSubmodulesUpdater')]
 class PowermailPermissionSubmoduleUpdater implements UpgradeWizardInterface
 {
-    public function getIdentifier(): string
-    {
-        return 'powermailPermissionSubmodulesUpdater';
-    }
-
     public function getTitle(): string
     {
         return 'EXT:powermail: Grant permissions for submodules to editors';

@@ -44,11 +44,6 @@ class PowermailPluginUpdater implements UpgradeWizardInterface
         $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
     }
 
-    public function getIdentifier(): string
-    {
-        return 'powermailPluginUpdater';
-    }
-
     public function getTitle(): string
     {
         return 'Powermail: Migrate list types and switchable controller actions to CTypes';

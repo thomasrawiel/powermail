@@ -17,11 +17,6 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 #[UpgradeWizard('powermailTextNullUpdateWizard')]
 class PowermailTextNullUpdateWizard implements UpgradeWizardInterface
 {
-    public function getIdentifier(): string
-    {
-        return 'powermailTextNullUpdateWizard';
-    }
-
     public function getTitle(): string
     {
         return 'Powermail: Update all database TEXT fields that have a null value with a default value';

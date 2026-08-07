@@ -22,11 +22,6 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 #[UpgradeWizard('powermailRelationUpdateWizard')]
 class PowermailRelationUpdateWizard implements UpgradeWizardInterface
 {
-    public function getIdentifier(): string
-    {
-        return 'powermailRelationUpdateWizard';
-    }
-
     public function getTitle(): string
     {
         return 'Powermail: Update relations in database (relevant for entries from < 8.0.0)';
