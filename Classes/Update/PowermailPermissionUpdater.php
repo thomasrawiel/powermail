@@ -20,11 +20,6 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
 class PowermailPermissionUpdater implements UpgradeWizardInterface
 {
-    public function getIdentifier(): string
-    {
-        return 'powermailPermissionUpdater';
-    }
-
     public function getTitle(): string
     {
         return 'EXT:powermail: Migrate plugin permissions';

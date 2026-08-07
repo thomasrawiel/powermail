@@ -45,14 +45,6 @@ class PowermailPluginUpdater implements UpgradeWizardInterface
     /**
      * @return string
      */
-    public function getIdentifier(): string
-    {
-        return 'powermailPluginUpdater';
-    }
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return 'Powermail: Migrate list types and switchable controller actions to CTypes';
