@@ -244,6 +244,17 @@ class MailRepositoryTest extends UnitTestCase
                 'abc',
                 'Prof. Dr. Max Muster',
             ],
+            // The submitted value is returned verbatim on purpose. It is persisted, shown in the
+            // backend module and exported, so it must not be mangled here. Keeping it out of a Fluid
+            // template source is the job of SendMailService::getKeysAllowedToContainFluid().
+            [
+                [
+                    '{f:cObject(typoscriptObjectPath:\'lib.evil\')}',
+                ],
+                null,
+                null,
+                '{f:cObject(typoscriptObjectPath:\'lib.evil\')}',
+            ],
         ];
     }
 

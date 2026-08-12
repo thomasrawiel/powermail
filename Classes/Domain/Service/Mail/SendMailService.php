@@ -28,6 +28,48 @@ use TYPO3\CMS\Extbase\Mvc\Request;
 class SendMailService
 {
     /**
+     * Keys of the $email array that can hold a Fluid template at all
+     */
+    private const PARSABLE_KEYS = [
+        'receiverName',
+        'receiverEmail',
+        'senderName',
+        'senderEmail',
+        'replyToName',
+        'replyToEmail',
+        'subject',
+    ];
+
+    /**
+     * Per mail type those keys of the $email array that were written by an editor (FlexForm) or an
+     * integrator (TypoScript) and may therefore contain Fluid. That is a documented feature - a
+     * subject "Message from {firstname}" or a receiver "{f:cObject(typoscriptObjectPath:'lib.x')}".
+     *
+     * Every key that is not listed for a type holds a value that a website visitor can submit: the
+     * sender of a mail to the receiver is the visitor, and the receiver of a mail to the sender is
+     * the visitor as well. Such a value must never be used as a Fluid template source, because that
+     * would let a visitor execute ViewHelpers.
+     *
+     * receiverEmail is listed for no type: for receiver and disclaimer mails it was already parsed in
+     * ReceiverMailReceiverPropertiesService::getEmailsFromFlexForm() - with the visitor values
+     * substituted into it - and it always holds a validated email address afterwards. Note that
+     * GeneralUtility::validEmail() accepts a quoted local part, so an address is no proof that a
+     * value is harmless.
+     */
+    private const CONFIGURED_KEYS_PER_TYPE = [
+        'receiver' => ['receiverName', 'subject'],
+        'disclaimer' => ['receiverName', 'subject'],
+        'sender' => ['senderName', 'senderEmail', 'replyToName', 'replyToEmail', 'subject'],
+        'optin' => ['senderName', 'senderEmail', 'replyToName', 'replyToEmail', 'subject'],
+    ];
+
+    /**
+     * Mail types of other extensions have an unknown provenance, so only the subject is treated as a
+     * configured value. Override getKeysAllowedToContainFluid() to widen this for an own mail type.
+     */
+    private const CONFIGURED_KEYS_FALLBACK = ['subject'];
+
+    /**
      * @var array
      */
     protected array $settings;
@@ -425,6 +467,9 @@ class SendMailService
     /**
      * Parsing variables with fluid engine to allow viewhelpers in flexform
      *
+     * Only values that were written in FlexForm or TypoScript are parsed - never a value that was
+     * submitted by a website visitor, see getKeysAllowedToContainFluid().
+     *
      * @param array $email
      * @param Mail $mail
      * @return void
@@ -471,21 +516,40 @@ class SendMailService
                 'email'
             );
         }
-        $parse = [
-            'receiverName',
-            'receiverEmail',
-            'senderName',
-            'senderEmail',
-            'replyToName',
-            'replyToEmail',
-            'subject',
-        ];
-        foreach ($parse as $value) {
-            $email[$value] = TemplateUtility::fluidParseString(
-                $email[$value],
+        foreach ($this->getKeysAllowedToContainFluid() as $key) {
+            $email[$key] = $this->parseWithFluid(
+                $email[$key],
                 $mailRepository->getVariablesWithMarkersFromMail($mail)
             );
         }
+    }
+
+    /**
+     * Security: only values that were written by an editor or an integrator may be used as a Fluid
+     * template source
+     *
+     * @see self::CONFIGURED_KEYS_PER_TYPE
+     * @return string[]
+     */
+    protected function getKeysAllowedToContainFluid(): array
+    {
+        $configuredKeys = self::CONFIGURED_KEYS_PER_TYPE[$this->type] ?? self::CONFIGURED_KEYS_FALLBACK;
+
+        // iterate the full list instead of the allowlist to keep the original parsing order
+        return array_values(
+            array_filter(
+                self::PARSABLE_KEYS,
+                static fn (string $key): bool => in_array($key, $configuredKeys, true)
+            )
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $variables
+     */
+    protected function parseWithFluid(string $value, array $variables): string
+    {
+        return TemplateUtility::fluidParseString($value, $variables);
     }
 
     /**

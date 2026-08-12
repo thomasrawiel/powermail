@@ -3781,16 +3781,6 @@ parameters:
 			path: ../../Classes/Utility/StringUtility.php
 
 		-
-			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
-			count: 1
-			path: ../../Classes/Utility/TemplateUtility.php
-
-		-
-			message: "#^Method In2code\\\\Powermail\\\\Utility\\\\TemplateUtility\\:\\:fluidParseString\\(\\) has parameter \\$variables with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../Classes/Utility/TemplateUtility.php
-
-		-
 			message: "#^Method In2code\\\\Powermail\\\\Utility\\\\TemplateUtility\\:\\:getTemplateFolders\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../Classes/Utility/TemplateUtility.php
