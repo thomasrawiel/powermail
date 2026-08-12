@@ -112,7 +112,8 @@
 		"test:php:phpstan": "phpstan analyse -c .project/tests/phpstan.neon",
 		"test:php:phpstan:generate-baseline": "phpstan analyse -c .project/tests/phpstan.neon --generate-baseline .project/tests/phpstan-baseline.neon",
 		"test:typoscript:lint": "typoscript-lint --config=.project/tests/typoscript-lint.yml",
-		"test:unit": "phpunit -c phpunit.xml.dist"
+		"test:unit": "phpunit -c phpunit.xml.dist",
+		"test:functional": "phpunit -c .project/tests/phpunit-functional.xml"
 	},
 	"extra": {
 		"typo3/cms": {

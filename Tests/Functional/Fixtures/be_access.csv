@@ -1,0 +1,13 @@
+"be_groups"
+,"uid","pid","title","db_mountpoints","groupMods"
+,1,0,"Editors (restricted)","20","web_powermail,powermail_list"
+
+"be_users"
+,"uid","pid","username","password","admin","disable","deleted","usergroup"
+,1,0,"admin","",1,0,0,""
+,2,0,"editor","",0,0,0,"1"
+
+"pages"
+,"uid","pid","title","doktype","perms_userid","perms_groupid","perms_user","perms_group","perms_everybody","deleted","hidden"
+,20,0,"Editor area (accessible)",1,1,1,31,31,0,0,0
+,50,0,"Foreign HR area (no access)",1,1,99,31,31,0,0,0

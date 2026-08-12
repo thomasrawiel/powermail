@@ -97,3 +97,28 @@ jobs:
           - 8.1
           - 8.2
           - 8.3
+  functional-tests:
+    name: "PHP Functional Tests"
+    runs-on: ubuntu-24.04
+    needs: php-lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: none
+          extensions: pdo_sqlite, sqlite3
+          tools: composer:v2
+      - name: "Composer Install"
+        run: "composer install"
+      - name: "Run Functional Tests"
+        run: "composer test:functional"
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - 8.1
+          - 8.2
+          - 8.3

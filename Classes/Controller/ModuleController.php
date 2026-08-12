@@ -9,6 +9,7 @@ use In2code\Powermail\Domain\Model\Mail;
 use In2code\Powermail\Domain\Repository\PageRepository;
 use In2code\Powermail\Domain\Service\SlidingWindowPagination;
 use In2code\Powermail\Exception\FileCannotBeCreatedException;
+use In2code\Powermail\Exception\NoPageAccessException;
 use In2code\Powermail\Utility\BackendUtility;
 use In2code\Powermail\Utility\BasicFileUtility;
 use In2code\Powermail\Utility\ConfigurationUtility;
@@ -59,10 +60,24 @@ class ModuleController extends AbstractController
         $this->pageRenderer = $pageRenderer;
     }
 
+    /**
+     * @throws NoPageAccessException
+     */
     public function initializeAction(): void
     {
         $this->piVars = $this->request->getArguments();
-        $this->id = (int)GeneralUtility::_GP('id');
+        // Resolve the page id from the same source order as \TYPO3\CMS\Backend\Middleware\BackendModuleValidator
+        // (query params before parsed body), so the validated value and the used value cannot diverge.
+        $parsedBody = $this->request->getParsedBody();
+        $parsedBody = is_array($parsedBody) ? $parsedBody : [];
+        $this->id = (int)($this->request->getQueryParams()['id'] ?? $parsedBody['id'] ?? 0);
+
+        // Security: enforce page access on the resolved (int) id. The framework's BackendModuleValidator only
+        // checks canonical integer ids (MathUtility::canBeInterpretedAsInteger()), so a non-canonical id such
+        // as "09002" would otherwise bypass its check while still resolving to a foreign pid here.
+        if ($this->id > 0 && !BackendUtility::isPageAccessGranted($this->id)) {
+            throw new NoPageAccessException('You don\'t have access to this page', 1755000000);
+        }
 
         $this->moduleData = $this->request->getAttribute('moduleData');
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);

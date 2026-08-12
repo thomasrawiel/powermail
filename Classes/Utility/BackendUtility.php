@@ -13,6 +13,7 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -246,6 +247,28 @@ class BackendUtility
             // @codeCoverageIgnoreEnd
         }
         return $pids;
+    }
+
+    /**
+     * Check whether the current backend user is allowed to access (show) a single page.
+     *
+     * Mirrors the page-access enforcement of \TYPO3\CMS\Backend\Middleware\BackendModuleValidator, but is
+     * evaluated on the already resolved (int) page id used by the module actions. This closes the parser
+     * differential where a non-canonical id string (e.g. "09002") slips past the middleware's
+     * MathUtility::canBeInterpretedAsInteger() gate while still resolving to a valid pid in the controller.
+     * Admins pass automatically; non-existing, deleted or non-permitted pages return false.
+     *
+     * @param int $pageId
+     * @return bool
+     */
+    public static function isPageAccessGranted(int $pageId): bool
+    {
+        if ($pageId <= 0) {
+            return false;
+        }
+
+        $permissionClause = self::getBackendUserAuthentication()->getPagePermsClause(Permission::PAGE_SHOW);
+        return is_array(BackendUtilityCore::readPageAccess($pageId, $permissionClause));
     }
 
     /**
